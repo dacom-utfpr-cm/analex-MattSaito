@@ -1,4 +1,5 @@
 from automata.fa.Moore import Moore
+import string
 import sys, os
 
 from myerror import MyError
@@ -8,33 +9,50 @@ error_handler = MyError('LexerErrors')
 global check_cm
 global check_key
 
+letras = string.ascii_letters # 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+digitos = string.digits # '0123456789'
+chars_para_id = letras + digitos + '_' # conjunto para ID
+
 moore = Moore(
-    states=['q0', 'q1', 'q2', 'q3', 'q4'],
-    input_alphabet=['i' , 'n' , 't', ' '],
-    output_alphabet=['INT', 'ELSE'],
+    states=['q0', 'q1', 'q2', 'q3', 'q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15','q16','q17','q18','q19','q20','q21','q22','q23',
+    'q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35','q36','q37','q38','q39','q40','q41','q42','q43','q44','q45','q46','q47','q48',
+    'q49','q50','q51','q52','q53','q54','q55','q56','q57','q58','q59','q60','q61','q62','q63','q64','q65','qID'],
+
+    input_alphabet=list(chars_para_id) + ['+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',', '\n', ' ',], 
+
+    # input_alphabet=['' ,'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2',
+    # '3','4','5','6','7','8','9','\n','+','-','*','/','<','>','=','(',')','[',']','{','}',';',','],
+
+    output_alphabet=['INT', 'ELSE','IF','WHILE','FLOAT','RETURN','VOID','MINUS','PLUS','TIMES','DIVIDE','DIFFERENT','LPAREN','RPAREN','NUMBER','ID',
+    'LBRACKETS','RBRACKETS','COMMA','LBRACES','RBRACES','GREATER','GREATER_EQUAL','LESS','LESS_EQUAL','EQUALS','SEMICOLON','ATTRIBUTION'],
+
     transitions={
                   'q0' : {
                       'i' : 'q1',
                   },
                   'q1': {
-                      'n': 'q2',
+                      'f': 'q13','n': 'q10',
                   },
-                  'q2': {
-                      't': 'q3',
+                  'q10': {
+                      't': 'q11',
 
                   },
-                  'q3': {
-                    '':'q4', '\n': 'q4',
-                  }
+                  'q11': {
+                    '':'q12', '\n': 'q12',
+                  },
+                  'q13' : {
+                        '':'q14', '\n': 'q14',
+                  },
               },
 
     initial_state='q0',
     output_table={
                   'q0' : '',
                   'q1' : '',
-                  'q2' : '',
-                  'q3' : '',
-                  'q4' : 'INT'
+                  'q10' : '',
+                  'q11' : '',
+                  'q12' : 'INT',
+                  'q14' : 'IF',
               }
               )
 
