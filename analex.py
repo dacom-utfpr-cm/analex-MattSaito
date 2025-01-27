@@ -1,4 +1,4 @@
-# from automata.fa.Moore import Moore
+from automata.fa.Moore import Moore
 import sys, os
 
 from myerror import MyError
@@ -8,34 +8,36 @@ error_handler = MyError('LexerErrors')
 global check_cm
 global check_key
 
-# moore = Moore(['q0', 'q1', 'q2', 'q3', 'q4'],
-#               ['i' , 'n' , 't', ' '],
-#               ['INT', 'ELSE'],
-#               {
-#                   'q0' : {
-#                       'i' : 'q1',
-#                   },
-#                   'q1': {
-#                       'n': 'q2',
-#                   },
-#                   'q2': {
-#                       't': 'q3',
+moore = Moore(
+    states=['q0', 'q1', 'q2', 'q3', 'q4'],
+    input_alphabet=['i' , 'n' , 't', ' '],
+    output_alphabet=['INT', 'ELSE'],
+    transitions={
+                  'q0' : {
+                      'i' : 'q1',
+                  },
+                  'q1': {
+                      'n': 'q2',
+                  },
+                  'q2': {
+                      't': 'q3',
 
-#                   },
-#                   'q3': {
-#                       '\n': 'q4',
-#                   }
-#               },
+                  },
+                  'q3': {
+                    '':'q4', '\n': 'q4',
+                  }
+              },
 
-#               'q0',
-#               {
-#                   'q0' : '',
-#                   'q1' : '',
-#                   'q2' : '',
-#                   'q3' : '',
-#                   'q4' : 'INT'
-#               }
-#               )
+    initial_state='q0',
+    output_table={
+                  'q0' : '',
+                  'q1' : '',
+                  'q2' : '',
+                  'q3' : '',
+                  'q4' : 'INT'
+              }
+              )
+
 
 def main():
     check_cm = False
@@ -71,7 +73,7 @@ def main():
             print(source_file)
             print("Lista de Tokens:")
         
-        #print(moore.get_output_from_string(source_file))
+        print(moore.get_output_from_string(source_file))
 
 
 if __name__ == "__main__":
