@@ -199,22 +199,60 @@ def process_input(input_string):
     return tokens
 
 def main():
-    if len(sys.argv) != 3 or sys.argv[1] != '-k':
-        print("Usage: python analex.py -k <filename>")
-        sys.exit(1)
+    check_cm = False
+    check_key = False
+    
+    for idx, arg in enumerate(sys.argv):
+        # print("Argument #{} is {}".format(idx, arg))
+        aux = arg.split('.')
+        if aux[-1] == 'cm':
+            check_cm = True
+            idx_cm = idx
 
-    filename = sys.argv[2]
-    if not os.path.isfile(filename):
-        print(f"File not found: {filename}")
-        sys.exit(1)
+        if(arg == "-k"):
+            check_key = True
+    
+    # print ("No. of arguments passed is ", len(sys.argv))
 
-    with open(filename, 'r') as file:
-        input_string = file.read()
+    if(len(sys.argv) < 3):
+        raise TypeError(error_handler.newError(check_key, 'ERR-LEX-USE'))
 
-    formatted_input = preprocess_input(input_string)
-    tokens = process_input(formatted_input)
-    for token in tokens:
-        print(token)
+    if not check_cm:
+      raise IOError(error_handler.newError(check_key, 'ERR-LEX-NOT-CM'))
+    elif not os.path.exists(sys.argv[idx_cm]):
+        raise IOError(error_handler.newError(check_key, 'ERR-LEX-FILE-NOT-EXISTS'))
+    else:
+        data = open(sys.argv[idx_cm])
+        source_file = data.read()
+
+        if not check_cm:
+            print("Definição da Máquina")
+            print(moore)
+            print("Entrada:")
+            print(source_file)
+            print("Lista de Tokens:")
+
+        tokens = process_input(preprocess_input(source_file))
+        for token in tokens:
+            print(token)
+        
+        print(moore.get_output_from_string(source_file))
+    # if len(sys.argv) != 3 or sys.argv[1] != '-k':
+    #     print("Usage: python analex.py -k <filename>")
+    #     sys.exit(1)
+
+    # filename = sys.argv[2]
+    # if not os.path.isfile(filename):
+    #     print(f"File not found: {filename}")
+    #     sys.exit(1)
+
+    # with open(filename, 'r') as file:
+    #     input_string = file.read()
+
+    # formatted_input = preprocess_input(input_string)
+    # tokens = process_input(formatted_input)
+    # for token in tokens:
+    #     print(token)
 
 if __name__ == "__main__":
     try:
