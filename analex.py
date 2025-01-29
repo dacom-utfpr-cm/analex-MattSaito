@@ -12,7 +12,7 @@ global check_key
 moore = Moore(
     states=['q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18', 'q19', 'q20', 'q21', 'q22', 'q23',
             'q24', 'q25', 'q26', 'q27', 'q28', 'q29', 'q30', 'q31', 'q32', 'q33', 'q34', 'q35', 'q36', 'q37', 'q38', 'q39', 'q40', 'q41', 'q42', 'q43', 'q44', 'q45', 'q46', 'q47', 'q48',
-            'q49', 'q50', 'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60', 'q61', 'q62', 'q63', 'q64', 'q65'],
+            'q49', 'q50', 'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60', 'q61', 'q62', 'q63', 'q64', 'q65', 'qID_START', 'qID_CONT', 'qNUM_START', 'qNUM_CONT'],
 
     input_alphabet=list(string.ascii_letters) + list(string.digits) + ['+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',', '\n', ' '],
 
@@ -23,8 +23,20 @@ moore = Moore(
         'q0': {
             'w': 'q2', 'i': 'q1', 'e': 'q18', 'f': 'q23', 'r': 'q29', 'v': 'q36', '-': 'q41', '+': 'q3', '*': 'q42', '/': 'q43',
             '!': 'q52', '(': 'q55', ')': 'q56', '[': 'q57', ']': 'q58', '{': 'q59', '}': 'q60', '<': 'q4', '>': 'q44', '=': 'q49',
-            ';': 'q61', ',': 'q62', ' ': 'q0', '\n': 'q0'
+            ';': 'q61', ',': 'q62', ' ': 'q0', '\n': 'q0',
+
+            **{c: 'qID_START' for c in string.ascii_letters},
+            **{c: 'qNUM_START' for c in string.digits}
         },
+
+        'qID_START': {c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Pode continuar com letra ou número
+        'qID_CONT': {c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Continua lendo ID
+        'qID_CONT': {c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']},  # ID termina
+
+        'qNUM_START': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
+        'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
+        'qNUM_CONT': {c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']},  # Número termina
+
         'q1': {'n': 'q10'},
         'q2': {'h': 'q5'},
         'q5': {'i': 'q6'},
@@ -162,7 +174,11 @@ moore = Moore(
         'q61': 'SEMICOLON',
         'q61_END': 'SEMICOLON',
         'q62': 'COMMA',
-        'q62_END': 'COMMA'
+        'q62_END': 'COMMA',
+        'qID_START': 'ID',
+        'qID_CONT': 'ID',
+        'qNUM_START': 'NUMBER',
+        'qNUM_CONT': 'NUMBER'
     }
 )
 
