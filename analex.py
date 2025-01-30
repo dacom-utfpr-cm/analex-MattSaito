@@ -44,8 +44,10 @@ moore = Moore(
         'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
         'qNUM_CONT': {c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']},  # Número termina
 
-        'q1': {'n': 'q10'},
+        'q1': {'n': 'q10', 'f': 'q13'},
         'q2': {'h': 'q5'},
+        'q3': {' ': 'q0'},
+        'q4': {'=': 'q16', ' ': 'q15'},
         'q5': {'i': 'q6'},
         'q6': {'l': 'q7'},
         'q7': {'e': 'q8'},
@@ -56,6 +58,8 @@ moore = Moore(
         'q12': {'\n': 'q0'},
         'q13': {' ': 'q14'},
         'q14': {'\n': 'q0'},
+        'q15': {'\n': 'q0'},
+        'q16': {' ': 'q0'},
         'q18': {'l': 'q19'},
         'q19': {'s': 'q20'},
         'q20': {'e': 'q21'},
@@ -79,46 +83,35 @@ moore = Moore(
         'q38': {'d': 'q39'},
         'q39': {' ': 'q40'},
         'q40': {'\n': 'q0'},
-        'q41': {' ': 'q41_END'},
-        'q41_END': {'\n': 'q0'},
-        'q42': {' ': 'q42_END'},
-        'q42_END': {'\n': 'q0'},
-        'q43': {' ': 'q43_END'},
-        'q43_END': {'\n': 'q0'},
-        'q44': {'=': 'q47', ' ': 'q45'},
-        'q45': {' ': 'q45_END'},
-        'q45_END': {'\n': 'q0'},
-        'q47': {' ': 'q47_END'},
-        'q47_END': {'\n': 'q0'},
-        'q49': {' ': 'q49_END', '=' : 'q50'},
-        'q50' : {' ': 'q50_END'},
-        'q50_END': {'\n': 'q0'},
-        'q49_END': {'\n': 'q0'},
-        'q52': {'=': 'q53'},
-        'q53': {' ': 'q53_END'},
-        'q53_END': {'\n': 'q0'},
-        'q55': {' ': 'q55_END'},
-        'q55_END': {'\n': 'q0'},
-        'q56': {' ': 'q56_END'},
-        'q56_END': {'\n': 'q0'},
-        'q57': {' ': 'q57_END'},
-        'q57_END': {'\n': 'q0'},
-        'q58': {' ': 'q58_END'},
-        'q58_END': {'\n': 'q0'},
-        'q59': {' ': 'q59_END'},
-        'q59_END': {'\n': 'q0'},
-        'q60': {' ': 'q60_END'},
-        'q60_END': {'\n': 'q0'},
-        'q61': {' ': 'q61_END'},
-        'q61_END': {'\n': 'q0'},
-        'q62': {' ': 'q62_END'},
-        'q62_END': {'\n': 'q0'}
+        'q41' : {' ': 'q0'},
+        'q42' : {' ': 'q0'},
+        'q43' : {' ': 'q0'},
+        'q44' : {'=' : 'q46', ' ' : 'q45'},
+        'q45' : {'\n': 'q0'},
+        'q46' : {' ' : 'q47'},
+        'q47' : {'\n': 'q0'},
+        'q48' : {' ': 'q0'},
+        'q49' : {'=' : 'q48', ' ' : 'q50'},
+        'q50' : {'\n': 'q0'},
+        'q52' : {'=' : 'q53'},
+        'q53' : {' ': 'q0'},
+        'q55' : {' ': 'q0'},
+        'q56' : {' ': 'q0'},
+        'q57' : {' ': 'q0'},
+        'q58' : {' ': 'q0'},
+        'q59' : {' ': 'q0'},
+        'q60' : {' ': 'q0'},
+        'q61' : {' ': 'q0'},
+        'q62' : {' ': 'q0'},
+
     },
     initial_state='q0',
     output_table={
         'q0': '',
         'q1': '',
         'q2': '',
+        'q3': 'PLUS',
+        'q4': '',
         'q5': '',
         'q6': '',
         'q7': '',
@@ -129,6 +122,8 @@ moore = Moore(
         'q12': 'INT',
         'q13': 'IF',
         'q14': 'IF',
+        'q15': 'LESS',
+        'q16': 'LESS_EQUAL',
         'q18': '',
         'q19': '',
         'q20': '',
@@ -138,7 +133,7 @@ moore = Moore(
         'q24': '',
         'q25': '',
         'q26': '',
-        'q27': '',
+        'q27': 'FLOAT',
         'q28': 'FLOAT',
         'q29': '',
         'q30': '',
@@ -153,39 +148,24 @@ moore = Moore(
         'q39': 'VOID',
         'q40': 'VOID',
         'q41': 'MINUS',
-        'q41_END': 'MINUS',
         'q42': 'TIMES',
-        'q42_END': 'TIMES',
         'q43': 'DIVIDE',
-        'q43_END': 'DIVIDE',
         'q44': '',
         'q45': 'GREATER',
-        'q45_END': 'GREATER',
         'q47': 'GREATER_EQUAL',
-        'q47_END': 'GREATER_EQUAL',
-        'q49': 'ATTRIBUTION',
-        'q49_END': 'ATTRIBUTION',
-        'q50': 'EQUALS',
-        'q50_END': 'EQUALS',
+        'q48' : 'EQUALS',
+        'q49': '',
+        'q50': 'ATTRIBUTION',
         'q52': '',
         'q53': 'DIFFERENT',
-        'q53_END': 'DIFFERENT',
         'q55': 'LPAREN',
-        'q55_END': 'LPAREN',
         'q56': 'RPAREN',
-        'q56_END': 'RPAREN',
         'q57': 'LBRACKETS',
-        'q57_END': 'LBRACKETS',
         'q58': 'RBRACKETS',
-        'q58_END': 'RBRACKETS',
         'q59': 'LBRACES',
-        'q59_END': 'LBRACES',
         'q60': 'RBRACES',
-        'q60_END': 'RBRACES',
         'q61': 'SEMICOLON',
-        'q61_END': 'SEMICOLON',
         'q62': 'COMMA',
-        'q62_END': 'COMMA',
         'qID_START': 'ID',
         'qID_CONT': 'ID',
         'qNUM_START': 'NUMBER',
@@ -194,13 +174,24 @@ moore = Moore(
 )
 
 def preprocess_input(input_string):
-    # Add newlines around certain characters to format the input correctly
     formatted_input = ""
-    for line in input_string.splitlines():
-        line = line.replace('(', '\n(\n').replace(')', '\n)\n').replace('{', '\n{\n').replace('}', '\n}\n').replace(';', '\n;\n').replace(',', '\n,\n').replace('=', '\n=\n').replace('!', '\n!\n').replace('<', '\n<\n').replace('>', '\n>\n').replace('+', '\n+\n').replace('-', '\n-\n').replace('*', '\n*\n').replace('/', '\n/\n').replace('[', '\n[\n').replace(']', '\n]\n').replace(' ', '\n \n')
-        formatted_input += line.strip() + "\n"
-        # print(formatted_input)
+    
+    # Vamos percorrer a string de entrada e apenas adicionar quebras de linha quando necessário.
+    for char in input_string:
+        if char in ' (){};,+-*/<>=![]':  # Se o caractere for um delimitador
+            formatted_input += f" \n{char} \n"  # Coloca o delimitador com quebras de linha
+        elif char == ' ':  # Se for um espaço, adiciona um único espaço
+            formatted_input += ' '
+        elif char == '\n':  # Se for uma nova linha, apenas a mantém
+            formatted_input += '\n'
+        else:
+            formatted_input += char  # Caso contrário, mantemos o caractere como está
+    
+    # Adiciona um \n ao final para garantir que a última linha tenha uma quebra de linha
+    formatted_input += '\n'
+    print (formatted_input)
     return formatted_input.strip()
+
 
 def process_input(input_string):
     tokens = []
@@ -222,8 +213,10 @@ def process_input(input_string):
     
     if moore.output_table[current_state]:
         tokens.append(moore.output_table[current_state])
-    # print(tokens)
+    print (tokens)
     return tokens
+
+
 
 def main():
     check_cm = False
@@ -264,22 +257,6 @@ def main():
             print(token)
         
         print(moore.get_output_from_string(source_file))
-    # if len(sys.argv) != 3 or sys.argv[1] != '-k':
-    #     print("Usage: python analex.py -k <filename>")
-    #     sys.exit(1)
-
-    # filename = sys.argv[2]
-    # if not os.path.isfile(filename):
-    #     print(f"File not found: {filename}")
-    #     sys.exit(1)
-
-    # with open(filename, 'r') as file:
-    #     input_string = file.read()
-
-    # formatted_input = preprocess_input(input_string)
-    # tokens = process_input(formatted_input)
-    # for token in tokens:
-    #     print(token)
 
 if __name__ == "__main__":
     try:
