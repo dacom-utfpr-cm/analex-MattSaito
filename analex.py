@@ -189,7 +189,7 @@ def preprocess_input(input_string):
                 continue
 
         # Se for um delimitador isolado, adiciona espaçamento
-        if char in '(){};,+-*/<>=![]':  
+        if char in ' (){};,+-*/<>=![]':  
             formatted_input += f" \n{char} \n"
         elif char == ' ':  
             formatted_input += ' '  # Mantém espaços simples
@@ -201,7 +201,7 @@ def preprocess_input(input_string):
         i += 1  # Avança para o próximo caractere
     
     formatted_input += '\n'
-    print (formatted_input)
+    # print (formatted_input)
     return formatted_input.strip()
 
 
@@ -226,7 +226,7 @@ def process_input(input_string):
     
     if moore.output_table[current_state]:
         tokens.append(moore.output_table[current_state])
-    print (tokens)
+    # print (tokens)
     return tokens
 
 
