@@ -1,6 +1,6 @@
 import string
 import sys, os
-
+import re
 from automata.fa.Moore import Moore
 from myerror import MyError
 
@@ -175,6 +175,7 @@ moore = Moore(
 
 def preprocess_input(input_string):
     formatted_input = ""
+    input_string = re.sub(r'/\*.*?\*/', '', input_string, flags=re.DOTALL)  # Remove comentários
     i = 0
 
     while i < len(input_string):
