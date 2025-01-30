@@ -25,7 +25,7 @@ moore = Moore(
             '!': 'q52', '(': 'q55', ')': 'q56', '[': 'q57', ']': 'q58', '{': 'q59', '}': 'q60', '<': 'q4', '>': 'q44', '=': 'q49',
             ';': 'q61', ',': 'q62', ' ': 'q0', '\n': 'q0',
 
-            **{c: 'qID_START' for c in string.ascii_letters},
+            **{c: 'qID_START' for c in string.ascii_letters if c not in ['w', 'i', 'e', 'f', 'r', 'v']},
             **{c: 'qNUM_START' for c in string.digits}
         },
 
