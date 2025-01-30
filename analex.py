@@ -175,22 +175,35 @@ moore = Moore(
 
 def preprocess_input(input_string):
     formatted_input = ""
-    
-    # Vamos percorrer a string de entrada e apenas adicionar quebras de linha quando necessário.
-    for char in input_string:
-        if char in ' (){};,+-*/<>=![]':  # Se o caractere for um delimitador
-            formatted_input += f" \n{char} \n"  # Coloca o delimitador com quebras de linha
-        elif char == ' ':  # Se for um espaço, adiciona um único espaço
-            formatted_input += ' '
-        elif char == '\n':  # Se for uma nova linha, apenas a mantém
-            formatted_input += '\n'
+    i = 0
+
+    while i < len(input_string):
+        char = input_string[i]
+        
+        # Verifica se é um operador composto
+        if i + 1 < len(input_string) and char in ['<', '>', '!', '=']:
+            next_char = input_string[i + 1]
+            if next_char == '=':
+                formatted_input += f"\n{char}{next_char}\n"
+                i += 2  # Pula os dois caracteres
+                continue
+
+        # Se for um delimitador isolado, adiciona espaçamento
+        if char in '(){};,+-*/<>=![]':  
+            formatted_input += f" \n{char} \n"
+        elif char == ' ':  
+            formatted_input += ' '  # Mantém espaços simples
+        elif char == '\n':  
+            formatted_input += '\n'  # Mantém novas linhas
         else:
-            formatted_input += char  # Caso contrário, mantemos o caractere como está
+            formatted_input += char  # Mantém o caractere
+
+        i += 1  # Avança para o próximo caractere
     
-    # Adiciona um \n ao final para garantir que a última linha tenha uma quebra de linha
     formatted_input += '\n'
     print (formatted_input)
     return formatted_input.strip()
+
 
 
 def process_input(input_string):
@@ -256,7 +269,7 @@ def main():
         for token in tokens:
             print(token)
         
-        print(moore.get_output_from_string(source_file))
+        # print(moore.get_output_from_string(source_file))
 
 if __name__ == "__main__":
     try:
