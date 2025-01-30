@@ -202,7 +202,7 @@ def preprocess_input(input_string):
         i += 1  # Avança para o próximo caractere
     
     formatted_input += '\n'
-    print (formatted_input)
+    # print (formatted_input)
     return formatted_input.strip()
 
 
@@ -240,7 +240,7 @@ def process_input(input_string):
             tokens.append(token.upper() if token in RESERVED_WORDS else "ID")
         elif moore.output_table.get(current_state):
             tokens.append(moore.output_table[current_state])
-    print (tokens)
+    # print (tokens)
     return tokens
 
 
