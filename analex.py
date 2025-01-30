@@ -3,7 +3,7 @@ import sys, os
 import re
 from automata.fa.Moore import Moore
 from myerror import MyError
-
+RESERVED_WORDS = ['if', 'else', 'while', 'float', 'return', 'void', 'int']
 error_handler = MyError('LexerErrors')
 
 global check_cm
@@ -25,7 +25,7 @@ moore = Moore(
             '!': 'q52', '(': 'q55', ')': 'q56', '[': 'q57', ']': 'q58', '{': 'q59', '}': 'q60', '<': 'q4', '>': 'q44', '=': 'q49',
             ';': 'q61', ',': 'q62', ' ': 'q0', '\n': 'q0',
 
-            **{c: 'qID_START' for c in string.ascii_letters if c not in ['w', 'i', 'e', 'f', 'r', 'v']},
+            **{c: 'qID_START' for c in string.ascii_letters},
             **{c: 'qNUM_START' for c in string.digits}
         },
 
@@ -202,7 +202,7 @@ def preprocess_input(input_string):
         i += 1  # Avança para o próximo caractere
     
     formatted_input += '\n'
-    # print (formatted_input)
+    print (formatted_input)
     return formatted_input.strip()
 
 
@@ -211,24 +211,38 @@ def process_input(input_string):
     tokens = []
     current_state = moore.initial_state
     token = ""
-    
+
     for char in input_string:
         if char in moore.input_alphabet:
             next_state = moore.transitions[current_state].get(char, 'q0')
-            if next_state == 'q0' and current_state != 'q0':
-                if moore.output_table[current_state]:
+
+            if next_state == 'q0':  # Finalizou um token
+                if current_state in ['qID_START', 'qID_CONT']:
+                    if token in RESERVED_WORDS:
+                        tokens.append(token.upper())  # Palavra reservada
+                    else:
+                        tokens.append("ID")
+                elif moore.output_table.get(current_state):
                     tokens.append(moore.output_table[current_state])
+
+                token = ""  # Reinicia o token
                 current_state = moore.initial_state
             else:
+                token += char  # Continua construindo o token
                 current_state = next_state
         else:
             error_handler.handle_error(f"Unexpected character: {char}")
             return tokens
-    
-    if moore.output_table[current_state]:
-        tokens.append(moore.output_table[current_state])
-    # print (tokens)
+
+    # Garante que o último token seja adicionado
+    if token:
+        if current_state in ['qID_START', 'qID_CONT']:
+            tokens.append(token.upper() if token in RESERVED_WORDS else "ID")
+        elif moore.output_table.get(current_state):
+            tokens.append(moore.output_table[current_state])
+    print (tokens)
     return tokens
+
 
 
 
