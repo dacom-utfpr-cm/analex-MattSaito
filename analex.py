@@ -29,9 +29,16 @@ moore = Moore(
             **{c: 'qNUM_START' for c in string.digits}
         },
 
-        'qID_START': {c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Pode continuar com letra ou número
-        'qID_CONT': {c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Continua lendo ID
-        'qID_CONT': {c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']},  # ID termina
+        'qID_START': {
+            **{c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Continua como ID
+            **{c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']}  # Termina o ID
+        },
+
+        'qID_CONT': {
+            **{c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Continua como ID
+            **{c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']}  # Termina o ID
+        },
+        
 
         'qNUM_START': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
         'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
@@ -83,7 +90,9 @@ moore = Moore(
         'q45_END': {'\n': 'q0'},
         'q47': {' ': 'q47_END'},
         'q47_END': {'\n': 'q0'},
-        'q49': {' ': 'q49_END'},
+        'q49': {' ': 'q49_END', '=' : 'q50'},
+        'q50' : {' ': 'q50_END'},
+        'q50_END': {'\n': 'q0'},
         'q49_END': {'\n': 'q0'},
         'q52': {'=': 'q53'},
         'q53': {' ': 'q53_END'},
@@ -154,8 +163,10 @@ moore = Moore(
         'q45_END': 'GREATER',
         'q47': 'GREATER_EQUAL',
         'q47_END': 'GREATER_EQUAL',
-        'q49': 'EQUALS',
-        'q49_END': 'EQUALS',
+        'q49': 'ATTRIBUTION',
+        'q49_END': 'ATTRIBUTION',
+        'q50': 'EQUALS',
+        'q50_END': 'EQUALS',
         'q52': '',
         'q53': 'DIFFERENT',
         'q53_END': 'DIFFERENT',
@@ -186,7 +197,7 @@ def preprocess_input(input_string):
     # Add newlines around certain characters to format the input correctly
     formatted_input = ""
     for line in input_string.splitlines():
-        line = line.replace('(', '\n(\n').replace(')', '\n)\n').replace('{', '\n{\n').replace('}', '\n}\n').replace(';', '\n;\n').replace(',', '\n,\n')
+        line = line.replace('(', '\n(\n').replace(')', '\n)\n').replace('{', '\n{\n').replace('}', '\n}\n').replace(';', '\n;\n').replace(',', '\n,\n').replace('=', '\n=\n').replace('!', '\n!\n').replace('<', '\n<\n').replace('>', '\n>\n').replace('+', '\n+\n').replace('-', '\n-\n').replace('*', '\n*\n').replace('/', '\n/\n').replace('[', '\n[\n').replace(']', '\n]\n').replace(' ', '\n \n')
         formatted_input += line.strip() + "\n"
         # print(formatted_input)
     return formatted_input.strip()
@@ -211,7 +222,7 @@ def process_input(input_string):
     
     if moore.output_table[current_state]:
         tokens.append(moore.output_table[current_state])
-    
+    # print(tokens)
     return tokens
 
 def main():
