@@ -1,7 +1,7 @@
+from automata.fa.Moore import Moore
 import string
 import sys, os
 import re
-from automata.fa.Moore import Moore
 from myerror import MyError
 RESERVED_WORDS = ['if', 'else', 'while', 'float', 'return', 'void', 'int']
 error_handler = MyError('LexerErrors')
