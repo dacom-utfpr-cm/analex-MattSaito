@@ -12,12 +12,12 @@ global check_key
 moore = Moore(
     states=['q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18', 'q19', 'q20', 'q21', 'q22', 'q23',
             'q24', 'q25', 'q26', 'q27', 'q28', 'q29', 'q30', 'q31', 'q32', 'q33', 'q34', 'q35', 'q36', 'q37', 'q38', 'q39', 'q40', 'q41', 'q42', 'q43', 'q44', 'q45', 'q46', 'q47', 'q48',
-            'q49', 'q50', 'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60', 'q61', 'q62', 'q63', 'q64', 'q65', 'qID_START', 'qID_CONT', 'qNUM_START', 'qNUM_CONT'],
+            'q49', 'q50', 'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60', 'q61', 'q62', 'q63', 'q64', 'q65', 'qID_START', 'qID_CONT', 'qNUM_START', 'qNUM_CONT','qCOMS','qCOMB','qCOME'],
 
     input_alphabet=list(string.ascii_letters) + list(string.digits) + ['+','!', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',', '\n', ' '],
 
     output_alphabet=['INT', 'ELSE', 'IF', 'WHILE', 'FLOAT', 'RETURN', 'VOID', 'MINUS', 'PLUS', 'TIMES', 'DIVIDE', 'DIFFERENT', 'LPAREN', 'RPAREN', 'NUMBER', 'ID',
-                     'LBRACKETS', 'RBRACKETS', 'COMMA', 'LBRACES', 'RBRACES', 'GREATER', 'GREATER_EQUAL', 'LESS', 'LESS_EQUAL', 'EQUALS', 'SEMICOLON', 'ATTRIBUTION'],
+                     'LBRACKETS', 'RBRACKETS', 'COMMA', 'LBRACES', 'RBRACES', 'GREATER', 'GREATER_EQUAL', 'LESS', 'LESS_EQUAL', 'EQUALS', 'SEMICOLON', 'ATTRIBUTION','COMMENT'],
 
     transitions={
         'q0': {
@@ -39,6 +39,9 @@ moore = Moore(
             **{c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']}  # Termina o ID
         },
         
+        'qCOMS': {c: 'qCOMB' for c in string.printable},  # Consome caracteres dentro do comentário
+        'qCOMB': {'*': 'qCOME', **{c: 'qCOMB' for c in string.printable if c not in ["*"]}},  # Aguarda "*/"
+        'qCOME': {'/': 'q0', **{c: 'qCOMB' for c in string.printable if c not in "*/"}},  # Fecha comentário
 
         'qNUM_START': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
         'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
@@ -85,7 +88,7 @@ moore = Moore(
         'q40': {'\n': 'q0'},
         'q41' : {' ': 'q0'},
         'q42' : {' ': 'q0'},
-        'q43' : {' ': 'q0'},
+        'q43' : {'*': 'qCOMS',' ': 'q0'},
         'q44' : {'=' : 'q46', ' ' : 'q45'},
         'q45' : {'\n': 'q0'},
         'q46' : {' ' : 'q0'},
@@ -168,13 +171,16 @@ moore = Moore(
         'qID_START': 'ID',
         'qID_CONT': 'ID',
         'qNUM_START': 'NUMBER',
-        'qNUM_CONT': 'NUMBER'
+        'qNUM_CONT': 'NUMBER',
+        'qCOMS' : '',
+        'qCOMB' : '',
+        'qCOME' : ''
     }
 )
 
 def preprocess_input(input_string):
     formatted_input = ""
-    input_string = re.sub(r'/\*.*?\*/', '', input_string, flags=re.DOTALL)  # Remove comentários
+    # input_string = re.sub(r'/\*.*?\*/', '', input_string, flags=re.DOTALL)  # Remove comentários
     i = 0
 
     while i < len(input_string):
@@ -186,6 +192,20 @@ def preprocess_input(input_string):
             if next_char == '=':
                 formatted_input += f"\n{char}{next_char}\n"
                 i += 2  # Pula os dois caracteres
+                continue
+        #verifica se e comentario
+        if i + 1 < len(input_string) and char in ['/']:
+            next_char = input_string[i + 1]
+            if next_char == '*':
+                formatted_input += f"\n{char}{next_char}\n"
+                i += 2
+                continue
+
+        if i + 1 < len(input_string) and char in ['*']:
+            next_char = input_string[i + 1]
+            if next_char == '/':
+                formatted_input += f"\n{char}{next_char}\n"
+                i += 2
                 continue
 
         # Se for um delimitador isolado, adiciona espaçamento
