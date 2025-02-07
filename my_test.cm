@@ -28,8 +28,8 @@ int main() {
     floatNumber = 314;
     voidPointer = 0;
 
-    /* Este é um
-       comentário de múltiplas linhas */
+    /* Este e um
+       comentario de multiplas linhas */
 
     return 0;
 }

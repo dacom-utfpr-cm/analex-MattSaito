@@ -3,7 +3,7 @@ import string
 import sys, os
 import re
 from myerror import MyError
-RESERVED_WORDS = ['if', 'else', 'while', 'float', 'return', 'void', 'int']
+# RESERVED_WORDS = ['if', 'else', 'while', 'float', 'return', 'void', 'int']
 error_handler = MyError('LexerErrors')
 
 global check_cm
@@ -17,7 +17,7 @@ moore = Moore(
     input_alphabet=list(string.ascii_letters) + list(string.digits) + ['+','!', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',', '\n', ' '],
 
     output_alphabet=['INT', 'ELSE', 'IF', 'WHILE', 'FLOAT', 'RETURN', 'VOID', 'MINUS', 'PLUS', 'TIMES', 'DIVIDE', 'DIFFERENT', 'LPAREN', 'RPAREN', 'NUMBER', 'ID',
-                     'LBRACKETS', 'RBRACKETS', 'COMMA', 'LBRACES', 'RBRACES', 'GREATER', 'GREATER_EQUAL', 'LESS', 'LESS_EQUAL', 'EQUALS', 'SEMICOLON', 'ATTRIBUTION','COMMENT'],
+                     'LBRACKETS', 'RBRACKETS', 'COMMA', 'LBRACES', 'RBRACES', 'GREATER', 'GREATER_EQUAL', 'LESS', 'LESS_EQUAL', 'EQUALS', 'SEMICOLON', 'ATTRIBUTION'],
 
     transitions={
         'q0': {
@@ -25,7 +25,7 @@ moore = Moore(
             '!': 'q52', '(': 'q55', ')': 'q56', '[': 'q57', ']': 'q58', '{': 'q59', '}': 'q60', '<': 'q4', '>': 'q44', '=': 'q49',
             ';': 'q61', ',': 'q62', ' ': 'q0', '\n': 'q0',
 
-            **{c: 'qID_START' for c in string.ascii_letters},
+            **{c: 'qID_START' for c in string.ascii_letters if c not in {'w', 'i', 'e', 'f', 'r', 'v'}},  # Começa um ID
             **{c: 'qNUM_START' for c in string.digits}
         },
 
@@ -47,43 +47,43 @@ moore = Moore(
         'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
         'qNUM_CONT': {c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']},  # Número termina
 
-        'q1': {'n': 'q10', 'f': 'q13'},
-        'q2': {'h': 'q5'},
+        'q1': {' ' : 'qID_CONT', 'n': 'q10', 'f': 'q13'},
+        'q2': {' ' : 'qID_CONT','h': 'q5'},
         'q3': {' ': 'q0'},
         'q4': {'=': 'q16', ' ': 'q15'},
-        'q5': {'i': 'q6'},
-        'q6': {'l': 'q7'},
-        'q7': {'e': 'q8'},
+        'q5': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'i'},'i': 'q6'},
+        'q6': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'l'},'l': 'q7'},
+        'q7': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'e'},'e': 'q8'},
         'q8': {' ': 'q9'},
         'q9': {'\n': 'q0'},
-        'q10': {'t': 'q11'},
+        'q10': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 't'},'t': 'q11'},
         'q11': {' ': 'q12'},
         'q12': {'\n': 'q0'},
         'q13': {' ': 'q14'},
         'q14': {'\n': 'q0'},
         'q15': {'\n': 'q0'},
         'q16': {' ': 'q0'},
-        'q18': {'l': 'q19'},
-        'q19': {'s': 'q20'},
-        'q20': {'e': 'q21'},
+        'q18': {' ': 'qID_CONT','l': 'q19'},
+        'q19': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 's'},'s': 'q20'},
+        'q20': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'e'},'e': 'q21'},
         'q21': {' ': 'q22'},
         'q22': {'\n': 'q0'},
-        'q23': {'l': 'q24'},
-        'q24': {'o': 'q25'},
-        'q25': {'a': 'q26'},
-        'q26': {'t': 'q27'},
+        'q23': {' ' : 'qID_CONT','l': 'q24'},
+        'q24': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'o'},'o': 'q25'},
+        'q25': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'a'},'a': 'q26'},
+        'q26': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 't'},'t': 'q27'},
         'q27': {' ': 'q28'},
         'q28': {'\n': 'q0'},
-        'q29': {'e': 'q30'},
-        'q30': {'t': 'q31'},
-        'q31': {'u': 'q32'},
-        'q32': {'r': 'q33'},
-        'q33': {'n': 'q34'},
+        'q29': {' ' : 'qID_CONT', 'e': 'q30'},
+        'q30': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 't'},'t': 'q31'},
+        'q31': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'u'},'u': 'q32'},
+        'q32': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'r'},'r': 'q33'},
+        'q33': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'n'},'n': 'q34'},
         'q34': {' ': 'q35'},
         'q35': {'\n': 'q0'},
-        'q36': {'o': 'q37'},
-        'q37': {'i': 'q38'},
-        'q38': {'d': 'q39'},
+        'q36': {' ' : 'qID_CONT','o': 'q37'},
+        'q37': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'i'},'i': 'q38'},
+        'q38': {**{c: 'qID_CONT' for c in string.ascii_letters if c != 'd'},'d': 'q39'},
         'q39': {' ': 'q40'},
         'q40': {'\n': 'q0'},
         'q41' : {' ': 'q0'},
@@ -120,7 +120,7 @@ moore = Moore(
         'q8': '',
         'q9': 'WHILE',
         'q10': '',
-        'q11': '',
+        'q11': 'INT',
         'q12': 'INT',
         'q13': '',
         'q14': 'IF',
@@ -236,13 +236,8 @@ def process_input(input_string):
             next_state = moore.transitions[current_state].get(char, 'q0')
 
             if next_state == 'q0':  # Finalizou um token
-                if current_state in ['qID_START', 'qID_CONT']:
-                    if token in RESERVED_WORDS:
-                        tokens.append(token.upper())  # Palavra reservada
-                    else:
-                        tokens.append("ID")
-                elif moore.output_table.get(current_state):
-                    tokens.append(moore.output_table[current_state])
+                if moore.output_table.get(current_state):
+                    tokens.append(moore.output_table[current_state])  # Apenas usa o output da máquina
 
                 token = ""  # Reinicia o token
                 current_state = moore.initial_state
@@ -254,13 +249,11 @@ def process_input(input_string):
             return tokens
 
     # Garante que o último token seja adicionado
-    if token:
-        if current_state in ['qID_START', 'qID_CONT']:
-            tokens.append(token.upper() if token in RESERVED_WORDS else "ID")
-        elif moore.output_table.get(current_state):
-            tokens.append(moore.output_table[current_state])
-    # print (tokens)
+    if moore.output_table.get(current_state):
+        tokens.append(moore.output_table[current_state])
+    # print(tokens)
     return tokens
+
 
 
 
