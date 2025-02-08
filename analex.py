@@ -3,7 +3,6 @@ import string
 import sys, os
 import re
 from myerror import MyError
-# RESERVED_WORDS = ['if', 'else', 'while', 'float', 'return', 'void', 'int']
 error_handler = MyError('LexerErrors')
 
 global check_cm
@@ -25,12 +24,12 @@ moore = Moore(
             '!': 'q52', '(': 'q55', ')': 'q56', '[': 'q57', ']': 'q58', '{': 'q59', '}': 'q60', '<': 'q4', '>': 'q44', '=': 'q49',
             ';': 'q61', ',': 'q62', ' ': 'q0', '\n': 'q0',
 
-            **{c: 'qID_START' for c in string.ascii_letters if c not in {'w', 'i', 'e', 'f', 'r', 'v'}},  # Começa um ID
+            **{c: 'qID_START' for c in string.ascii_letters if c not in {'w', 'i', 'e', 'f', 'r', 'v'}},  
             **{c: 'qNUM_START' for c in string.digits}
         },
 
         'qID_START': {
-            **{c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Continua como ID
+            **{c: 'qID_CONT' for c in string.ascii_letters + string.digits},  # Começa um ID
             **{c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']}  # Termina o ID
         },
 
@@ -43,7 +42,7 @@ moore = Moore(
         'qCOMB': {'*': 'qCOME', **{c: 'qCOMB' for c in string.printable if c not in ["*"]}},  # Aguarda "*/"
         'qCOME': {'/': 'q0', **{c: 'qCOMB' for c in string.printable if c not in "*/"}},  # Fecha comentário
 
-        'qNUM_START': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
+        'qNUM_START': {c: 'qNUM_CONT' for c in string.digits},  # Começa a ler número
         'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número
         'qNUM_CONT': {c: 'q0' for c in [' ', '\n', '+', '-', '*', '/', '<', '>', '=', '(', ')', '[', ']', '{', '}', ';', ',']},  # Número termina
 
@@ -180,7 +179,6 @@ moore = Moore(
 
 def preprocess_input(input_string):
     formatted_input = ""
-    # input_string = re.sub(r'/\*.*?\*/', '', input_string, flags=re.DOTALL)  # Remove comentários
     i = 0
 
     while i < len(input_string):
@@ -193,14 +191,17 @@ def preprocess_input(input_string):
                 formatted_input += f"\n{char}{next_char}\n"
                 i += 2  # Pula os dois caracteres
                 continue
+
         #verifica se e comentario
+        #abertura de comentário
         if i + 1 < len(input_string) and char in ['/']:
             next_char = input_string[i + 1]
             if next_char == '*':
                 formatted_input += f"\n{char}{next_char}\n"
                 i += 2
                 continue
-
+        
+        #fechamento de comentário
         if i + 1 < len(input_string) and char in ['*']:
             next_char = input_string[i + 1]
             if next_char == '/':
@@ -231,13 +232,15 @@ def process_input(input_string):
     current_state = moore.initial_state
     token = ""
 
+    #formatando tokens
+
     for char in input_string:
         if char in moore.input_alphabet:
             next_state = moore.transitions[current_state].get(char, 'q0')
 
             if next_state == 'q0':  # Finalizou um token
                 if moore.output_table.get(current_state):
-                    tokens.append(moore.output_table[current_state])  # Apenas usa o output da máquina
+                    tokens.append(moore.output_table[current_state])  # Acessa e guarda o output da máquina
 
                 token = ""  # Reinicia o token
                 current_state = moore.initial_state
