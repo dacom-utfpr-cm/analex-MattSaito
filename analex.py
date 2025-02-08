@@ -1,7 +1,6 @@
 from automata.fa.Moore import Moore
 import string
 import sys, os
-import re
 from myerror import MyError
 error_handler = MyError('LexerErrors')
 
@@ -40,7 +39,7 @@ moore = Moore(
         
         'qCOMS': {c: 'qCOMB' for c in string.printable},  # Consome caracteres dentro do comentário
         'qCOMB': {'*': 'qCOME', **{c: 'qCOMB' for c in string.printable if c not in ["*"]}},  # Aguarda "*/"
-        'qCOME': {'/': 'q0', **{c: 'qCOMB' for c in string.printable if c not in "*/"}},  # Fecha comentário
+        'qCOME': {'/': 'q0', **{c: 'qCOMB' for c in string.printable if c not in "/"}},  # Fecha comentário
 
         'qNUM_START': {c: 'qNUM_CONT' for c in string.digits},  # Começa a ler número
         'qNUM_CONT': {c: 'qNUM_CONT' for c in string.digits},  # Continua lendo número

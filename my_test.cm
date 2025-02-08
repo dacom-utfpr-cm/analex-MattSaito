@@ -30,6 +30,8 @@ int main() {
 
     /* Este e um
        comentario de multiplas linhas */
+       
+    float a,b,c,e;
 
     return 0;
 }
