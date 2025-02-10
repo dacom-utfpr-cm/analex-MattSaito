@@ -247,7 +247,7 @@ def process_input(input_string):
                 token += char  # Continua construindo o token
                 current_state = next_state
         else:
-            error_handler.handle_error(f"Unexpected character: {char}")
+            raise IOError(error_handler.newError(char,'ERR-LEX-INV-CHAR'))
             return tokens
 
     # Garante que o último token seja adicionado
@@ -276,7 +276,7 @@ def main():
     
     # print ("No. of arguments passed is ", len(sys.argv))
 
-    if(len(sys.argv) < 3):
+    if(len(sys.argv) <= 2 and check_key == True):
         raise TypeError(error_handler.newError(check_key, 'ERR-LEX-USE'))
 
     if not check_cm:
@@ -287,7 +287,7 @@ def main():
         data = open(sys.argv[idx_cm])
         source_file = data.read()
 
-        if not check_cm:
+        if not check_key:
             print("Definição da Máquina")
             print(moore)
             print("Entrada:")
